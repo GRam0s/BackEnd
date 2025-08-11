@@ -1,11 +1,11 @@
 <?php
-    $nota = 0;
-    $nota2 = 6.0;
+    $nota = readline("Digitie a 1° nota do aluno: ");
+    $nota2 = readline("Digite a 2° nota do aluno: ");
     $media = ($nota + $nota2)/2;
-    $numero_aulas = 400;
-    $numero_presenca = 350;
+    $numero_aulas = readline("Digite o número de aulas dadas: ");
+    $numero_presenca = readline("Digite o número de presenças do aluno: ");
     $presenca = $numero_presenca/$numero_aulas*100;
-    $aluno = "Enzo Enrico";
+    $aluno = readline("Digite o nome do aluno: ");
 
     if ($media >= 5) {
         echo "Aluno aprovado com a média de ", $media;
