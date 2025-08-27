@@ -1,6 +1,11 @@
 <?php
 //Modelagem de dados sem a ultilização de POO
 
+//public - São atribustos públicos que podem ser acessados de fora de uma classe
+//private - São atributos privados que podem ser acessados somente dentro da classe
+//getter - método padrão para ler ou obter valores de um atributo privado
+//setter - método padrão para alterar ou modificar valores de um atributo privado
+
 $marca_carro1 ="Honda";
 $modelo_carro1 ="Civic";
 $ano_carro1 =2016;
