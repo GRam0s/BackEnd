@@ -1,57 +1,131 @@
 <?php
 
-// Cenário 1: 
-// Classes: Lugares - Terra, Japão, Brasil, Acre e Turistas, Atividade, comida, CorpoDagua
-// Métodos: Visitar, Poderão, Comer, Nadar
+// Interface Atividade
+interface Atividade {
+    public function executar();
+}
 
-class Turistas {
+class Comida implements Atividade { //AGREGAÇÃO
     private $nome;
-    private $idade;
-    private $visitar;
-    private $comer;
-    private $nadar;
+    private $descricao;
 
-    public function __construct($nome, $idade) {
-        $this->setNome($nome);
-        $this->setidade($idade);
-    }
-
-    public function setNome() {
-        $this->nome = "";
+    public function __construct($nome, $descricao) {
+        $this->nome = $nome;
+        $this->descricao = $descricao;
     }
 
     public function getNome() {
         return $this->nome;
     }
 
-    public function setIdade($idade) {
+    public function getDescricao() {
+        return $this->descricao;
+    }
+
+    public function executar() {
+        echo "\nComendo: {$this->getDescricao()}";
+    }
+}
+
+class CorpoDagua implements Atividade { // AGREGAÇÃO
+    private $nome;
+    private $tipo;
+
+    public function __construct($nome, $tipo) {
+        $this->nome = $nome;
+        $this->tipo = $tipo;
+    }
+
+    public function getNome() {
+        return $this->nome;
+    }
+
+    public function getTipo() {
+        return $this->tipo;
+    }
+
+    public function executar() {
+        echo "\nNadando no {$this->tipo}: {$this->nome}";
+    }
+}
+
+class Localidade { // COMPÕE ATIVIDADES
+    private $nome;
+    private $atividades = [];
+
+    public function __construct($nome) {
+        $this->nome = $nome;
+    }
+
+    public function adicionarAtividade(Atividade $atividade) {
+        $this->atividades[] = $atividade;
+    }
+
+    public function getNome() {
+        return $this->nome;
+    }
+
+    public function informarAtividades() {
+        echo "\nAtividades disponíveis em {$this->nome}:";
+        foreach ($this->atividades as $atividade) {
+            $atividade->executar();
+        }
+    }
+
+    public function getAtividades() {
+        return $this->atividades;
+    }
+}
+
+class Turista { // COMPÕES ATIVIDADES
+    private $nome;
+    private $idade;
+
+    public function __construct($nome, $idade) {
+        $this->nome = $nome;
         $this->idade = $idade;
     }
 
-    public function getIdade() {
-        return $this->idade;
+    public function visitar(Localidade $localidade) {
+        echo "\n{$this->nome} está visitando {$localidade->getNome()}";
+        $localidade->informarAtividades();
     }
 
-    public function visitar($visitar) {
-        $this->visitar = $visitar;
-    }
-}
-
-
-class Lugares {
-    private $atividades;
-
-    public function __construct($atividades) {
-        $this->atividades = $atividades;
+    public function comer(Comida $comida) {
+        echo "\n{$this->nome} está comendo: " . $comida->getDescricao();
     }
 
-    public function informarAtividades($atividades) {
-        echo"As atividades que possuímos nesse local são: $this->atividades";
+    public function nadar(CorpoDagua $corpoDagua) {
+        echo "\n{$this->nome} está nadando no {$corpoDagua->getTipo()} chamado {$corpoDagua->getNome()}";
     }
 }
 
-$local1 = new Lugares("Jogar bola");
-$local1->informarAtividades("");
+$feijoada = new Comida("Feijoada", "Feijoada com arroz e farofa");
+$sushi = new Comida("Sushi", "Sushi de salmão e atum");
 
+$amazonas = new CorpoDagua("Rio Amazonas", "Rio");
+$pacifico = new CorpoDagua("Oceano Pacífico", "Oceano");
+
+$brasil = new Localidade("Brasil");
+$brasil->adicionarAtividade($feijoada);
+$brasil->adicionarAtividade($amazonas);
+
+$japao = new Localidade("Japão");
+$japao->adicionarAtividade($sushi);
+$japao->adicionarAtividade($pacifico);
+
+$turista = new Turista("Lucas", 30);
+
+$turista->visitar($brasil);
+$turista->comer($feijoada);
+$turista->nadar($amazonas);
+
+echo "\n";
+
+$turista->visitar($japao);
+$turista->comer($sushi);
+$turista->nadar($pacifico);
+
+echo "\n";
 
 ?>
