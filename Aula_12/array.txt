@@ -1,0 +1,9 @@
+Diferentemente dos arrays convencionais que associam os valores armazenadosno array a um índice, nos arrays associativos os valores são
+associados a uma chave, aonde as chaves assumem o papel do índice do array. Exemplo:
+
+$alunos["nome"] = "Gabrielson";
+
+Neste exemplo o valor "Gabrielson" está associado à chave "nome".
+
+Isso é feito para melhorar o entendimento do código e na execução e manipulação do array. Caso fossemos trabalhar com um array
+convencional, teriamos que lembrar qual o índice que iria corresponder a chave "nome".
