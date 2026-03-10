@@ -14,14 +14,13 @@ class ClientesFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
-    {
-        return [
-            'nome' => fake()->text,
-            'cpf' => fake()->text(),
-            'email' => fake()->text(),
-            'telefone' => fake()->text(),
-            'endereco' => fake()->text,
-        ];
-    }
+   public function definition(): array {
+    return [
+        'nome' => fake()->sentence(3),
+        'cpf' => fake()->name(),
+        'telefone' => fake()->sentence(5),
+        'reserva' => fake()->numberBetween(1,1000),
+      
+    ];
+}
 }
