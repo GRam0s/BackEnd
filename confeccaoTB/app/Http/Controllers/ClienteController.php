@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Cliente; 
+use App\Models\Cliente;
 
 class ClienteController extends Controller
 {
@@ -32,20 +32,29 @@ class ClienteController extends Controller
             'endereco' => 'nullable|string',
         ]);
 
-        // 2. Salva o novo cliente
-        Cliente::create($request->all());
+        // 2. Limpar e formatar os dados antes de salvar (aceita formatos limpos ou já formatados)
+        $dados = $request->all();
+        $dados['cpf'] = formatar_cpf(limpar_cpf($dados['cpf']));
+        $dados['telefone'] = formatar_telefone(limpar_telefone($dados['telefone']));
 
-        // 3. Redireciona de volta para a lista com uma mensagem de sucesso
+        // 3. Salva o novo cliente
+        Cliente::create($dados);
+
+        // 4. Redireciona de volta para a lista com uma mensagem de sucesso
         return redirect()->route('clientes.index')->with('success', 'Cliente cadastrado com sucesso!');
     }
         // Abre a tela de edição
         public function edit(Cliente $cliente) 
     {
-        return view('clientes.edit', compact('cliente'));
-    }
-
-// Salva a alteração no banco
-public function update(Request $request, Cliente $cliente) 
+            // Formatar dados para exibição
+            $cliente->cpf = formatar_cpf($cliente->cpf);
+            $cliente->telefone = formatar_telefone($cliente->telefone);
+            
+            return view('clientes.edit', compact('cliente'));
+        }
+        
+        // Salva a alteração no banco
+        public function update(Request $request, Cliente $cliente) 
 {
     $request->validate([
         'nome' => 'required|string|max:255',
@@ -54,7 +63,12 @@ public function update(Request $request, Cliente $cliente)
         'telefone' => 'required',
     ]);
 
-    $cliente->update($request->all());
+    // Limpar e formatar os dados antes de salvar (aceita formatos limpos ou já formatados)
+    $dados = $request->all();
+    $dados['cpf'] = formatar_cpf(limpar_cpf($dados['cpf']));
+    $dados['telefone'] = formatar_telefone(limpar_telefone($dados['telefone']));
+
+    $cliente->update($dados);
     return redirect()->route('clientes.index')->with('success', 'Cliente atualizado!');
 }
 
