@@ -7,14 +7,26 @@ use App\Http\Controllers\PokemonController;
 
 /*
 |--------------------------------------------------------------------------
-| API de Exemplo Pokemon 
+| API de Exemplo Pokemon
 |--------------------------------------------------------------------------
 */
 
-// Exemplo 1: GET - Buscando dados de uma API Externa (PokeAPI)
+// Rota raiz - redireciona para a Pokédex
+Route::get('/', function () {
+    return redirect('/pokedex');
+});
 
+// Rota da Pokédex
+Route::get('/pokedex', [PokemonController::class, 'index']);
+
+// Rota de teste simples
+Route::get('/teste', function () {
+    return 'Site funcionando!';
+});
+
+// Exemplo 1: GET - Buscando dados de uma API Externa (PokeAPI)
 Route::get('/pokemon/{nome}', function ($nome) {
-    $response = Http::get("https://pokeapi.co/api/v2/pokemon/{$nome}");
+    $response = Http::withoutVerifying()->get("https://pokeapi.co/api/v2/pokemon/{$nome}");
 
     if ($response->successful()) {
         $dados = $response->json();
@@ -32,7 +44,6 @@ Route::get('/pokemon/{nome}', function ($nome) {
 });
 
 // Exemplo 2: POST - Recebendo dados via JSON (Simulando Cadastro)
-
 Route::post('/pokemon/novo', function (Request $request) {
     // Validação dos dados recebidos
     $dados = $request->validate([
@@ -49,4 +60,8 @@ Route::post('/pokemon/novo', function (Request $request) {
     ], 201); // 201: Created
 });
 
-Route::get('/pokedex',[PokemonController::class, 'index']);
+// Rotas para gerenciamento de Pokémon local
+// Route::get('/pokemon/create', [PokemonController::class, 'create'])->name('pokemon.create');
+Route::post('/pokemon', [PokemonController::class, 'store'])->name('pokemon.store');
+Route::get('/pokemon-local', [PokemonController::class, 'list'])->name('pokemon.local');
+
