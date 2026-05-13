@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meus Pokémon</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <?php echo app('Illuminate\Foundation\Vite')(['resources/css/app.css', 'resources/js/app.js']); ?>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script>
         document.addEventListener('alpine:init', () => {
@@ -118,7 +118,7 @@
 <body x-data x-cloak>
 <div class="page-wrapper">
 
-    {{-- Top nav --}}
+    
     <nav class="top-nav">
         <a href="/pokedex" class="back-link">
             <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 12H5M12 5l-7 7 7 7"/></svg>
@@ -126,19 +126,20 @@
         </a>
     </nav>
 
-    {{-- Flash --}}
-    @if(session('success'))
+    
+    <?php if(session('success')): ?>
         <div class="flash">
             <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-            {{ session('success') }}
-        </div>
-    @endif
+            <?php echo e(session('success')); ?>
 
-    {{-- Header --}}
+        </div>
+    <?php endif; ?>
+
+    
     <div class="header-section">
         <div>
             <h1 class="page-title">Meus Pokémon</h1>
-            <p class="page-subtitle">{{ $pokemons->count() }} pokémon{{ $pokemons->count() !== 1 ? 's' : '' }} criado{{ $pokemons->count() !== 1 ? 's' : '' }}</p>
+            <p class="page-subtitle"><?php echo e($pokemons->count()); ?> pokémon<?php echo e($pokemons->count() !== 1 ? 's' : ''); ?> criado<?php echo e($pokemons->count() !== 1 ? 's' : ''); ?></p>
         </div>
         <button class="btn-add" x-on:click="$store.modal.open = true">
             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
@@ -146,108 +147,109 @@
         </button>
     </div>
 
-    {{-- Controls --}}
-    <form method="GET" action="{{ url('/pokemon-local') }}">
+    
+    <form method="GET" action="<?php echo e(url('/pokemon-local')); ?>">
         <div class="controls-bar">
-            <input type="text" name="pokemon" value="{{ request('pokemon') }}" placeholder="Buscar por nome..." autocomplete="off" class="ctrl-input">
+            <input type="text" name="pokemon" value="<?php echo e(request('pokemon')); ?>" placeholder="Buscar por nome..." autocomplete="off" class="ctrl-input">
             <select name="sort" class="ctrl-select">
-                <option value="" {{ !request('sort') ? 'selected' : '' }}>Ordenar por...</option>
-                <option value="hp"             {{ request('sort')=='hp'             ? 'selected' : '' }}>Maior HP</option>
-                <option value="attack"         {{ request('sort')=='attack'         ? 'selected' : '' }}>Maior Ataque</option>
-                <option value="defense"        {{ request('sort')=='defense'        ? 'selected' : '' }}>Maior Defesa</option>
-                <option value="special_attack" {{ request('sort')=='special_attack' ? 'selected' : '' }}>Maior Atq. Esp.</option>
-                <option value="speed"          {{ request('sort')=='speed'          ? 'selected' : '' }}>Maior Velocidade</option>
+                <option value="" <?php echo e(!request('sort') ? 'selected' : ''); ?>>Ordenar por...</option>
+                <option value="hp"             <?php echo e(request('sort')=='hp'             ? 'selected' : ''); ?>>Maior HP</option>
+                <option value="attack"         <?php echo e(request('sort')=='attack'         ? 'selected' : ''); ?>>Maior Ataque</option>
+                <option value="defense"        <?php echo e(request('sort')=='defense'        ? 'selected' : ''); ?>>Maior Defesa</option>
+                <option value="special_attack" <?php echo e(request('sort')=='special_attack' ? 'selected' : ''); ?>>Maior Atq. Esp.</option>
+                <option value="speed"          <?php echo e(request('sort')=='speed'          ? 'selected' : ''); ?>>Maior Velocidade</option>
             </select>
             <button type="submit" class="ctrl-btn">Buscar</button>
-            @if(request('pokemon') || request('sort'))
-                <a href="{{ url('/pokemon-local') }}" class="ctrl-btn" style="background:#334155; text-decoration:none; display:inline-flex; align-items:center;">Limpar</a>
-            @endif
+            <?php if(request('pokemon') || request('sort')): ?>
+                <a href="<?php echo e(url('/pokemon-local')); ?>" class="ctrl-btn" style="background:#334155; text-decoration:none; display:inline-flex; align-items:center;">Limpar</a>
+            <?php endif; ?>
         </div>
     </form>
 
-    {{-- Summary --}}
-    @if($pokemons->isNotEmpty())
-    @php
+    
+    <?php if($pokemons->isNotEmpty()): ?>
+    <?php
         $strongest = $pokemons->sortByDesc(fn($p) => $p->hp + $p->attack + $p->defense + $p->special_attack + $p->special_defense + $p->speed)->first();
         $avgTotal  = round($pokemons->avg(fn($p) => $p->hp + $p->attack + $p->defense + $p->special_attack + $p->special_defense + $p->speed));
-    @endphp
+    ?>
     <div class="summary-grid">
         <div class="summary-card">
-            <div class="summary-val" style="color:#38bdf8;">{{ $pokemons->count() }}</div>
+            <div class="summary-val" style="color:#38bdf8;"><?php echo e($pokemons->count()); ?></div>
             <div class="summary-label">Total</div>
         </div>
         <div class="summary-card">
-            <div class="summary-val" style="color:#34d399;">{{ $avgTotal }}</div>
+            <div class="summary-val" style="color:#34d399;"><?php echo e($avgTotal); ?></div>
             <div class="summary-label">Stats médios</div>
         </div>
         <div class="summary-card">
-            <div class="summary-val" style="font-size:1.1rem; color:#fbbf24; padding-top:6px;">{{ ucfirst($strongest->name) }}</div>
+            <div class="summary-val" style="font-size:1.1rem; color:#fbbf24; padding-top:6px;"><?php echo e(ucfirst($strongest->name)); ?></div>
             <div class="summary-label">Mais forte</div>
         </div>
     </div>
-    @endif
+    <?php endif; ?>
 
-    {{-- Grid --}}
+    
     <div class="poke-grid">
-        @forelse($pokemons as $pokemon)
-        @php
+        <?php $__empty_1 = true; $__currentLoopData = $pokemons; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $pokemon): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+        <?php
             $allStats    = ['hp' => $pokemon->hp, 'attack' => $pokemon->attack, 'defense' => $pokemon->defense, 'special_attack' => $pokemon->special_attack, 'special_defense' => $pokemon->special_defense, 'speed' => $pokemon->speed];
             $dominant    = array_search(max($allStats), $allStats);
             $accentMap   = ['hp' => '#ef4444', 'attack' => '#f97316', 'defense' => '#eab308', 'special_attack' => '#a855f7', 'special_defense' => '#06b6d4', 'speed' => '#3b82f6'];
             $accent      = $accentMap[$dominant] ?? '#38bdf8';
             $totalStats  = array_sum($allStats);
             $statLabels  = ['hp' => 'HP', 'attack' => 'ATK', 'defense' => 'DEF', 'special_attack' => 'SPA', 'special_defense' => 'SPD', 'speed' => 'VEL'];
-        @endphp
-        <div class="poke-card" style="--accent: {{ $accent }};">
+        ?>
+        <div class="poke-card" style="--accent: <?php echo e($accent); ?>;">
 
-            {{-- Image area --}}
+            
             <div class="poke-img-area">
-                <button class="fav-btn-card" data-name="{{ $pokemon->name }}" onclick="toggleFavList(this)" title="Favoritar">♡</button>
-                @if($pokemon->image)
-                    <img src="{{ Storage::url($pokemon->image) }}" alt="{{ $pokemon->name }}" onerror="this.parentNode.innerHTML+='<div class=no-img-placeholder>?</div>';this.remove()">
-                @else
+                <button class="fav-btn-card" data-name="<?php echo e($pokemon->name); ?>" onclick="toggleFavList(this)" title="Favoritar">♡</button>
+                <?php if($pokemon->image): ?>
+                    <img src="<?php echo e(Storage::url($pokemon->image)); ?>" alt="<?php echo e($pokemon->name); ?>" onerror="this.parentNode.innerHTML+='<div class=no-img-placeholder>?</div>';this.remove()">
+                <?php else: ?>
                     <div class="no-img-placeholder">?</div>
-                @endif
-                <span class="total-badge">{{ $totalStats }} pts</span>
+                <?php endif; ?>
+                <span class="total-badge"><?php echo e($totalStats); ?> pts</span>
             </div>
 
-            {{-- Body --}}
+            
             <div class="poke-body">
                 <div class="poke-header-row">
-                    <span class="poke-name">{{ ucfirst($pokemon->name) }}</span>
-                    <span class="poke-num">#{{ str_pad($pokemon->id, 3, '0', STR_PAD_LEFT) }}</span>
+                    <span class="poke-name"><?php echo e(ucfirst($pokemon->name)); ?></span>
+                    <span class="poke-num">#<?php echo e(str_pad($pokemon->id, 3, '0', STR_PAD_LEFT)); ?></span>
                 </div>
 
-                {{-- Stat bars --}}
+                
                 <div class="stat-bars">
-                    @foreach($allStats as $key => $val)
+                    <?php $__currentLoopData = $allStats; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $val): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <div class="stat-bar-row">
-                        <span class="sbl">{{ $statLabels[$key] }}</span>
-                        <div class="sbt"><div class="sbf" style="width: {{ min(100, ($val / 255) * 100) }}%;"></div></div>
-                        <span class="sbv">{{ $val }}</span>
+                        <span class="sbl"><?php echo e($statLabels[$key]); ?></span>
+                        <div class="sbt"><div class="sbf" style="width: <?php echo e(min(100, ($val / 255) * 100)); ?>%;"></div></div>
+                        <span class="sbv"><?php echo e($val); ?></span>
                     </div>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
 
-                {{-- Actions --}}
+                
                 <div class="card-actions">
                     <button class="action-edit"
                         @click="$store.editModal.show({
-                            id: {{ $pokemon->id }},
-                            name: '{{ addslashes($pokemon->name) }}',
-                            hp: {{ $pokemon->hp }},
-                            attack: {{ $pokemon->attack }},
-                            defense: {{ $pokemon->defense }},
-                            special_attack: {{ $pokemon->special_attack }},
-                            special_defense: {{ $pokemon->special_defense }},
-                            speed: {{ $pokemon->speed }}
+                            id: <?php echo e($pokemon->id); ?>,
+                            name: '<?php echo e(addslashes($pokemon->name)); ?>',
+                            hp: <?php echo e($pokemon->hp); ?>,
+                            attack: <?php echo e($pokemon->attack); ?>,
+                            defense: <?php echo e($pokemon->defense); ?>,
+                            special_attack: <?php echo e($pokemon->special_attack); ?>,
+                            special_defense: <?php echo e($pokemon->special_defense); ?>,
+                            speed: <?php echo e($pokemon->speed); ?>
+
                         })">
                         <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                         Editar
                     </button>
-                    <form action="{{ route('pokemon.destroy', $pokemon->id) }}" method="POST" onsubmit="return confirm('Excluir {{ addslashes(ucfirst($pokemon->name)) }}?')">
-                        @csrf
-                        @method('DELETE')
+                    <form action="<?php echo e(route('pokemon.destroy', $pokemon->id)); ?>" method="POST" onsubmit="return confirm('Excluir <?php echo e(addslashes(ucfirst($pokemon->name))); ?>?')">
+                        <?php echo csrf_field(); ?>
+                        <?php echo method_field('DELETE'); ?>
                         <button type="submit" class="action-del">
                             <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                             Excluir
@@ -257,29 +259,29 @@
             </div>
         </div>
 
-        @empty
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
         <div class="empty-state">
             <div style="font-size:4rem; margin-bottom:16px; opacity:0.2;">◎</div>
-            @php $termoBusca = trim((string) request('pokemon')); @endphp
+            <?php $termoBusca = trim((string) request('pokemon')); ?>
             <h3 style="font-size:1.4rem; font-weight:800; color:#475569; margin:0 0 8px;">Nenhum Pokémon encontrado</h3>
-            @if(!empty($termoBusca))
-                <p style="color:#334155; margin:0 0 24px;">Sem resultados para "{{ $termoBusca }}".</p>
-            @else
+            <?php if(!empty($termoBusca)): ?>
+                <p style="color:#334155; margin:0 0 24px;">Sem resultados para "<?php echo e($termoBusca); ?>".</p>
+            <?php else: ?>
                 <p style="color:#334155; margin:0 0 24px;">Crie seu primeiro Pokémon personalizado!</p>
-            @endif
+            <?php endif; ?>
             <button class="btn-add" style="margin:0 auto;" x-on:click="$store.modal.open = true">
                 <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
                 Cadastrar agora
             </button>
         </div>
-        @endforelse
+        <?php endif; ?>
     </div>
 </div>
 
-{{-- ── Modal Criar ─────────────────────────────────── --}}
-@include('components.pokemon-form')
 
-{{-- ── Modal Editar ─────────────────────────────────── --}}
+<?php echo $__env->make('components.pokemon-form', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+
+
 <div class="modal-bg" x-show="$store.editModal.visible" @click.self="$store.editModal.close()" @keydown.escape.window="$store.editModal.close()">
     <div class="modal-box" @click.stop>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px;">
@@ -290,8 +292,8 @@
         </div>
 
         <form :action="'/pokemon/' + $store.editModal.id" method="POST" enctype="multipart/form-data">
-            @csrf
-            @method('PUT')
+            <?php echo csrf_field(); ?>
+            <?php echo method_field('PUT'); ?>
 
             <div class="modal-field" style="margin-bottom:18px;">
                 <label>Nome do Pokémon</label>
@@ -361,3 +363,4 @@ updateHearts();
 </script>
 </body>
 </html>
+<?php /**PATH C:\laragon\www\Ramos\BackEnd\Aula 9\Pokemon\resources\views/pokemon-list.blade.php ENDPATH**/ ?>

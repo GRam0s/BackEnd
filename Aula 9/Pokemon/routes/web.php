@@ -24,9 +24,24 @@ Route::get('/teste', function () {
     return 'Site funcionando!';
 });
 
+// Rotas para gerenciamento de Pokémon local (POST antes de GET com parâmetro)
+Route::post('/pokemon', [PokemonController::class, 'store'])->name('pokemon.store');
+Route::put('/pokemon/{id}', [PokemonController::class, 'update'])->name('pokemon.update');
+Route::delete('/pokemon/{id}', [PokemonController::class, 'destroy'])->name('pokemon.destroy');
+Route::get('/pokemon-local', [PokemonController::class, 'list'])->name('pokemon.local');
+
 // Exemplo 1: GET - Buscando dados de uma API Externa (PokeAPI)
 Route::get('/pokemon/{nome}', function ($nome) {
-    $response = Http::withoutVerifying()->get("https://pokeapi.co/api/v2/pokemon/{$nome}");
+    $nome = trim(mb_strtolower($nome));
+
+    if ($nome === '') {
+        return response()->json(['erro' => 'Nome do Pokémon não pode estar vazio'], 400);
+    }
+
+    $response = Http::withoutVerifying()
+        ->acceptJson()
+        ->timeout(5)
+        ->get('https://pokeapi.co/api/v2/pokemon/' . rawurlencode($nome));
 
     if ($response->successful()) {
         $dados = $response->json();
@@ -40,7 +55,11 @@ Route::get('/pokemon/{nome}', function ($nome) {
         ], 200);
     }
 
-    return response()->json(['erro' => 'Pokémon não encontrado'], 404);
+    if ($response->clientError()) {
+        return response()->json(['erro' => 'Pokémon não encontrado'], 404);
+    }
+
+    return response()->json(['erro' => 'Falha ao buscar o Pokémon'], 502);
 });
 
 // Exemplo 2: POST - Recebendo dados via JSON (Simulando Cadastro)
@@ -59,9 +78,4 @@ Route::post('/pokemon/novo', function (Request $request) {
         'dados_recebidos' => $dados
     ], 201); // 201: Created
 });
-
-// Rotas para gerenciamento de Pokémon local
-// Route::get('/pokemon/create', [PokemonController::class, 'create'])->name('pokemon.create');
-Route::post('/pokemon', [PokemonController::class, 'store'])->name('pokemon.store');
-Route::get('/pokemon-local', [PokemonController::class, 'list'])->name('pokemon.local');
 

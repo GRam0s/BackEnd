@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokédex - {{ ucfirst(request('pokemon', 'pikachu')) }}</title>
+    <title>Pokédex - <?php echo e(ucfirst(request('pokemon', 'pikachu'))); ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -234,7 +234,7 @@
         <div class="card">
         <div class="flex justify-end gap-3 p-6">
                 <a
-                    href="{{ route('pokemon.local') }}"
+                    href="<?php echo e(route('pokemon.local')); ?>"
                     class="px-8 py-4 bg-slate-700/80 border-2 border-slate-500/50 text-slate-200 font-bold text-lg rounded-xl hover:border-cyan-400 hover:bg-slate-700 transform hover:-translate-y-1 transition-all duration-200 shadow-xl flex items-center gap-3"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -245,11 +245,11 @@
             </div>
 
         <div class="search-bar top-search-bar">
-            <form method="GET" action="{{ url('/pokedex') }}" class="search-form">
+            <form method="GET" action="<?php echo e(url('/pokedex')); ?>" class="search-form">
                 <input
                     type="text"
                     name="pokemon"
-                    value="{{ request('pokemon') }}"
+                    value="<?php echo e(request('pokemon')); ?>"
                     placeholder="Buscar Pokémon (ex: pikachu)"
                     autocomplete="off"
                 />
@@ -265,18 +265,18 @@
         <div class="card-header">
             <div>
                 <div class="badge">POKÉMON</div>
-                <h1 class="pokemon-title">{{ ucfirst($apiPokemon['name'] ?? '') }}</h1>
+                <h1 class="pokemon-title"><?php echo e(ucfirst($apiPokemon['name'] ?? '')); ?></h1>
                 <div class="pokemon-meta">
-                    <span>Nº {{ isset($apiPokemon['id']) ? str_pad($apiPokemon['id'], 3, '0', STR_PAD_LEFT) : '-' }}</span>
-                    <span>ALT {{ isset($apiPokemon['height']) ? number_format($apiPokemon['height'] / 10, 1, ',', '') : '-' }}m</span>
-                    <span>PES {{ isset($apiPokemon['weight']) ? number_format($apiPokemon['weight'] / 10, 1, ',', '') : '-' }}kg</span>
+                    <span>Nº <?php echo e(isset($apiPokemon['id']) ? str_pad($apiPokemon['id'], 3, '0', STR_PAD_LEFT) : '-'); ?></span>
+                    <span>ALT <?php echo e(isset($apiPokemon['height']) ? number_format($apiPokemon['height'] / 10, 1, ',', '') : '-'); ?>m</span>
+                    <span>PES <?php echo e(isset($apiPokemon['weight']) ? number_format($apiPokemon['weight'] / 10, 1, ',', '') : '-'); ?>kg</span>
                 </div>
                 <div class="mt-4">
-    @if(isset($apiPokemon['types']))
-        @foreach ($apiPokemon['types'] as $tipo)
-            <span class="type-chip">{{ strtoupper($tipo['type']['name']) }}</span>
-        @endforeach
-    @endif
+    <?php if(isset($apiPokemon['types'])): ?>
+        <?php $__currentLoopData = $apiPokemon['types']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $tipo): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <span class="type-chip"><?php echo e(strtoupper($tipo['type']['name'])); ?></span>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+    <?php endif; ?>
                 </div>
 
                 <div class="flex flex-wrap gap-3 mt-5">
@@ -286,29 +286,29 @@
                         </svg>
                         <span id="fav-label">Favoritar</span>
                     </button>
-                    @if(empty($apiPokemon['is_local']))
+                    <?php if(empty($apiPokemon['is_local'])): ?>
                     <button id="cry-btn" class="action-btn cry-btn" onclick="playCry()">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M12 6v12M8.464 15.536a5 5 0 010-7.072"/>
                         </svg>
                         Ouvir Grito
                     </button>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
 
             <div class="pokemon-image">
-                <img src="{{ $apiPokemon['sprites']['front_default'] ?? '' }}" alt="{{ $apiPokemon['name'] ?? '' }}">
+                <img src="<?php echo e($apiPokemon['sprites']['front_default'] ?? ''); ?>" alt="<?php echo e($apiPokemon['name'] ?? ''); ?>">
             </div>
         </div>
 
         <div class="details-grid">
             <div class="detail-card">
                 <h3>Região</h3>
-                @if(!empty($apiPokemon['is_local']))
+                <?php if(!empty($apiPokemon['is_local'])): ?>
                     <p>PERSONALIZADO</p>
-                @else
-                    <p>{{ strtoupper(
+                <?php else: ?>
+                    <p><?php echo e(strtoupper(
                         match(true) {
                             $apiPokemon['id'] <= 151 => 'Kanto',
                             $apiPokemon['id'] <= 251 => 'Johto',
@@ -320,23 +320,23 @@
                             $apiPokemon['id'] <= 905 => 'Galar',
                             default => 'Paldea'
                         }
-                    ) }}</p>
-                @endif
+                    )); ?></p>
+                <?php endif; ?>
             </div>
             <div class="detail-card">
                 <h3>Altura e Peso</h3>
-                @if(!empty($apiPokemon['is_local']))
+                <?php if(!empty($apiPokemon['is_local'])): ?>
                     <p>-</p>
-                @else
-                    {{ number_format($apiPokemon['height'] / 10, 1, ',', '') }}m / {{ number_format($apiPokemon['weight'] / 10, 1, ',', '') }}kg
-                @endif
+                <?php else: ?>
+                    <?php echo e(number_format($apiPokemon['height'] / 10, 1, ',', '')); ?>m / <?php echo e(number_format($apiPokemon['weight'] / 10, 1, ',', '')); ?>kg
+                <?php endif; ?>
             </div>
         </div>
 
     <div class="details-grid" style="grid-template-columns: 1fr; padding-top: 0;">
             <div class="detail-card">
                 <h3>Status</h3>
-                @php
+                <?php
                     $traducaoStats = [
                         'hp'               => 'VIDA',
                         'attack'           => 'ATAQUE',
@@ -345,23 +345,23 @@
                         'special-defense'  => 'DEF. ESP',
                         'speed'            => 'VELOCIDADE',
                     ];
-                @endphp
-                @foreach ($apiPokemon['stats'] as $stat)
-                    @php
+                ?>
+                <?php $__currentLoopData = $apiPokemon['stats']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $stat): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <?php
                         $nome = $stat['stat']['name'];
                         $valor = $stat['base_stat'];
                         $porcentagem = min(100, ($valor / 120) * 100);
-                    @endphp
+                    ?>
                     <div class="stat-row">
                         <div class="stat-title">
-                            <span>{{ $traducaoStats[$nome] ?? strtoupper($nome) }}</span>
-                            <span>{{ $valor }}</span>
+                            <span><?php echo e($traducaoStats[$nome] ?? strtoupper($nome)); ?></span>
+                            <span><?php echo e($valor); ?></span>
                         </div>
                         <div class="bar-track">
-                            <div class="bar-fill" style="width: {{ $porcentagem }}%;"></div>
+                            <div class="bar-fill" style="width: <?php echo e($porcentagem); ?>%;"></div>
                         </div>
                     </div>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
         </div>
 
@@ -379,7 +379,7 @@ function loadRandom() {
 }
 
 // ── Favoritos ───────────────────────────────────────────
-const POKEMON_NAME = '{{ addslashes($apiPokemon["name"] ?? "") }}';
+const POKEMON_NAME = '<?php echo e(addslashes($apiPokemon["name"] ?? "")); ?>';
 const FAV_KEY = 'pokemon_favorites';
 function getFavs() { return JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); }
 function toggleFavorite() {
@@ -400,8 +400,8 @@ function updateFavBtn() {
 updateFavBtn();
 
 // ── Grito do Pokémon ────────────────────────────────────
-@if(empty($apiPokemon['is_local']))
-const CRY_ID = {{ $apiPokemon['id'] ?? 0 }};
+<?php if(empty($apiPokemon['is_local'])): ?>
+const CRY_ID = <?php echo e($apiPokemon['id'] ?? 0); ?>;
 let cryAudio = null;
 function playCry() {
     const btn = document.getElementById('cry-btn');
@@ -414,7 +414,7 @@ function playCry() {
     cryAudio.play().catch(() => btn.classList.remove('playing'));
     cryAudio.onended = () => btn.classList.remove('playing');
 }
-@endif
+<?php endif; ?>
 
 // ── Cores dos tipos ─────────────────────────────────────
 const typeColors = {
@@ -432,3 +432,4 @@ document.querySelectorAll('.type-chip').forEach(chip => {
 </script>
 </body>
 </html>
+<?php /**PATH C:\laragon\www\Ramos\BackEnd\Aula 9\Pokemon\resources\views/pokemon.blade.php ENDPATH**/ ?>

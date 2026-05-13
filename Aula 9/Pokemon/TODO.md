@@ -1,7 +1,8 @@
-# TODO: Fix Modal Close Issue
+# TODO
 
-## Steps:
-- [x] 1. Edit pokemon-form.blade.php + pokemon.blade.php (Alpine.store para 'alpine:init' safe + botão safe open)
-- [ ] 2. Teste: php artisan serve → /pokedex → abra modal → teste X/cancel/backdrop/ESC/submit
-- [ ] 3. Verifique F12 Console por erros
-- [ ] 4. Complete task
+## Pokémon - Tela de listagem local
+- [x] Atualizar `PokemonController@list(Request $request)` para filtrar `Pokemon` por `?pokemon=` (LOWER(name) LIKE ...)
+- [x] Atualizar `resources/views/pokemon-list.blade.php` para incluir barra de pesquisa (GET /pokemon-local)
+- [x] Ajustar mensagem de vazio considerando o termo buscado
+- [ ] Testar manualmente rota `/pokemon-local` com e sem parâmetro `pokemon`
+

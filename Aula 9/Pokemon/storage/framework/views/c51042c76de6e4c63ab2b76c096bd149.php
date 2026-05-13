@@ -12,8 +12,8 @@
                 </button>
             </div>
 
-            <form action="{{ route('pokemon.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
-                @csrf
+            <form action="<?php echo e(route('pokemon.store')); ?>" method="POST" enctype="multipart/form-data" class="space-y-6">
+                <?php echo csrf_field(); ?>
                 
                 <div>
                     <label class="block text-sm font-semibold text-slate-300 mb-3">Nome do Pokémon</label>
@@ -70,3 +70,4 @@
     </div>
 </div>
 
+<?php /**PATH C:\laragon\www\Ramos\BackEnd\Aula 9\Pokemon\resources\views/components/pokemon-form.blade.php ENDPATH**/ ?>
